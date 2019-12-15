@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import List from './Todo/List'
+import List from './Todo/List';
+
 
 
 class App extends Component {

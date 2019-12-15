@@ -1,75 +1,82 @@
 import React, { Component } from 'react';
-
+import Counter from '../Hooks/Counter';
 
 class List extends Component {
     constructor() {
         super();
         this.state = {
-            produit: '',
-            products: []
-        }
+
+            products: [
+                { id: 1, nom: "poisson" },
+                { id: 2, nom: "lait" },
+                { id: 3, nom: "oeufs" }
+            ],
+            nouveauProduit: ''
+        };
     }
 
-    onChange(event) {
+    delete = (id) => {
+        //crée une copie du tableau
+        const produits = this.state.products.slice();
+        const index = produits.findIndex((produit) => produit.id === id);
+        produits.splice(index, 1);
         this.setState({
-            produit: event.target.value
+            products: produits
         });
     }
 
-    addElement(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
+        const id = new Date().getTime();
+        const p = this.state.nouveauProduit;
+        const product = {id : id, nom :p};
+
+        const novoProduits = this.state.products.slice();
+
+        novoProduits.push(product);
+
         this.setState({
-            produit: '',
-            products: [...this.state.products, this.state.produit]
+            products : novoProduits, nouveauProduit:''
         });
     }
 
-    delete(event) {
+    handleChange = (event) => {
+        //pour éviter que la page se recharge
         event.preventDefault();
-        const array = this.state.products;
-        const index = array.indexOf(event.target.value);
-        array.splice(index, 1);
+    
+        const value = event.target.value;
         this.setState({
-            products: array
+            nouveauProduit: value
         });
-    }
-
-    renderList() {
-        return this.state.products.map((value) => {
-            return (
-                <div key={value} className="list-group-item"> 
-                    {value} 
-                    <button 
-                    className="btn btn-danger m-3"
-                    onClick ={this.delete.bind(this)}
-                    >Supprimer
-                    </button>
-                </div>
-            )
-        })
     }
 
     render() {
+        const title = "Ma Liste de Course";
         return (
             <div>
-                <h1>Ma Liste de Course</h1>
-                <form>
+                <h1>{title}</h1>
+                <Counter />
+                <div className="list-group">
+
+                    {this.state.products.map(produit =>
+                        <div className="list-group-item">{produit.nom} <button className="btn btn-danger m-3" onClick={() => this.delete(produit.id)}>Supprimer</button></div>)
+                    }
+
+                </div>
+                <form onSubmit={this.handleSubmit.bind(this)}>
                     <input
-                        value={this.state.produit}
                         type="text"
-                        placeholder="votre élément"
-                        onChange={this.onChange.bind(this)}
+                        placeholder="votre produit"
+                        value={this.state.nouveauProduit}
+                        onChange={this.handleChange}
                     />
                     <button
                         className="btn btn-success m-3"
-                        onClick={this.addElement.bind(this)}
                     >
                         Ajouter
                         </button>
                 </form>
-                <div className="list-group">
-                    {this.renderList()}
-                </div>
+
 
             </div>
         );
